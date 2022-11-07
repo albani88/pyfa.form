@@ -292,6 +292,44 @@ namespace pyfa.form.libs
 
         }
 
+        public JArray detailmasterformfield(JObject json)
+        {
+            var jaReturn = new JArray();
+            var joReturn = new JObject();
+            List<dynamic> retObject = new List<dynamic>();
+            var dbprv = dbconn.sqlprovider();
+            var cstrname = dbconn.constringName("pyfatrack");
+            var split = "||";
+
+            string spname = "sp_detailmasterform_field";
+            string p1 = "@id" + split + json.GetValue("msf_id").ToString() + split + "i";
+            string p2 = "@code" + split + json.GetValue("code").ToString() + split + "s";
+            retObject = bc.ExecSqlWithReturnCustomSplit(dbprv, cstrname, split, spname, p1, p2);
+            jaReturn = lc.convertDynamicToJArray(retObject);
+
+            return jaReturn;
+
+        }
+
+        public JArray detailmasterformfielddetail(JObject json)
+        {
+            var jaReturn = new JArray();
+            var joReturn = new JObject();
+            List<dynamic> retObject = new List<dynamic>();
+            var dbprv = dbconn.sqlprovider();
+            var cstrname = dbconn.constringName("pyfatrack");
+            var split = "||";
+
+            string spname = "sp_detailmasterform_field_detail";
+            string p1 = "@id" + split + json.GetValue("msf_id").ToString() + split + "i";
+            string p2 = "@code" + split + json.GetValue("code").ToString() + split + "s";
+            retObject = bc.ExecSqlWithReturnCustomSplit(dbprv, cstrname, split, spname, p1, p2);
+            jaReturn = lc.convertDynamicToJArray(retObject);
+
+            return jaReturn;
+
+        }
+
 
         public JArray deletemasterform(JObject json)
         {
@@ -324,6 +362,23 @@ namespace pyfa.form.libs
             string spname = "sp_getfieldnamebyheadername";
             string p1 = "@header_name" + split + json.GetValue("header_name").ToString() + split + "s";
             retObject = bc.ExecSqlWithReturnCustomSplit(dbprv, cstrname, split, spname, p1);
+            jaReturn = lc.convertDynamicToJArray(retObject);
+
+            return jaReturn;
+
+        }
+
+        public JArray getheadername()
+        {
+            var jaReturn = new JArray();
+            var joReturn = new JObject();
+            List<dynamic> retObject = new List<dynamic>();
+            var dbprv = dbconn.sqlprovider();
+            var cstrname = dbconn.constringName("pyfatrack");
+            var split = "||";
+
+            string spname = "sp_getheadername";
+            retObject = bc.ExecSqlWithReturnCustomSplit(dbprv, cstrname, split, spname);
             jaReturn = lc.convertDynamicToJArray(retObject);
 
             return jaReturn;

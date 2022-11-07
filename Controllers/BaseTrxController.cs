@@ -22,7 +22,7 @@ namespace pyfa.form.Controllers
     {
         private lDbConn dbconn = new lDbConn();
         private BaseController bc = new BaseController();
-        public string InsertMasterForm(JObject json, string actiontype)
+        public string InsertMasterForm(JObject json)
         {
             string strout = "";
             var retObject = new List<dynamic>();
@@ -38,19 +38,11 @@ namespace pyfa.form.Controllers
             try
             {
                 SqlCommand cmd = new SqlCommand();
-                if (actiontype == "update")
-                {
-                    cmd = new SqlCommand("sp_deletemasterformdetailbymfhid", connection, trans);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    cmd.Parameters.AddWithValue("@id", Convert.ToInt32(json.GetValue("id").ToString()));
-                    cmd.ExecuteNonQuery();
-                }
-
                 cmd = new SqlCommand("insert_master_form_hdr", connection, trans);
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@code", Convert.ToString(json.GetValue("temp_code").ToString()));
                 cmd.Parameters.AddWithValue("@header_name", json.GetValue("header_name").ToString());
-                cmd.Parameters.AddWithValue("@content_type", json.GetValue("content_type").ToString());
+                cmd.Parameters.AddWithValue("@ttl_content", json.GetValue("ttl_contnet").ToString());
                 cmd.Parameters.AddWithValue("@usr", json.GetValue("user").ToString());
                 SqlDataReader dr = cmd.ExecuteReader();
                 cmd.Parameters.Clear();
@@ -68,9 +60,108 @@ namespace pyfa.form.Controllers
                     cmd.Parameters.Clear();
                     cmd.Parameters.AddWithValue("@id", Int32.Parse(mfh_id));
                     cmd.Parameters.AddWithValue("@code", json.GetValue("temp_code").ToString());
-                    cmd.Parameters.AddWithValue("@fieldid", Int32.Parse(data["fieldid"].ToString()));
-                    cmd.Parameters.AddWithValue("@counter", Int32.Parse(data["counter"].ToString()));
+                    cmd.Parameters.AddWithValue("@contentname", data["contentname"].ToString());
+                    cmd.Parameters.AddWithValue("@contenttype",data["contenttype"].ToString());
+                    cmd.Parameters.AddWithValue("@counter", data["counter"].ToString());
                     cmd.Parameters.AddWithValue("@usr", json.GetValue("user").ToString());
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.ExecuteNonQuery();
+                }
+                trans.Commit();
+                strout = "success";
+            }
+            catch (Exception ex)
+            {
+                trans.Rollback();
+                strout = ex.Message;
+            }
+            connection.Close();
+            SqlConnection.ClearPool(connection);
+            return strout;
+        }
+
+        public string updateMasterForm(JObject json)
+        {
+            string strout = "";
+            var retObject = new List<dynamic>();
+            var provider = dbconn.sqlprovider();
+            var cstrname = dbconn.constringName("pyfatrack");
+
+            var conn = dbconn.constringList(provider, cstrname);
+            SqlTransaction trans;
+            SqlConnection connection = new SqlConnection(conn);
+            connection.Open();
+            trans = connection.BeginTransaction();
+
+            try
+            {
+                SqlCommand cmd = new SqlCommand();
+                JArray jaData = JArray.Parse(json["detail"].ToString());
+                for (int i = 0; i < jaData.Count; i++)
+                {
+                    //insert form detail
+                    var data = new JObject();
+                    data = JObject.Parse(jaData[i].ToString());
+                    cmd = new SqlCommand("update_master_form_detail", connection, trans);
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.AddWithValue("@id", Int32.Parse(data["msf_id"].ToString()));
+                    cmd.Parameters.AddWithValue("@code", json.GetValue("temp_code").ToString());
+                    cmd.Parameters.AddWithValue("@contentname", data["contentname"].ToString());
+                    cmd.Parameters.AddWithValue("@contenttype", data["contenttype"].ToString());
+                    cmd.Parameters.AddWithValue("@counter", data["counter"].ToString());
+                    cmd.Parameters.AddWithValue("@usr", json.GetValue("user").ToString());
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.ExecuteNonQuery();
+                }
+                trans.Commit();
+                strout = "success";
+            }
+            catch (Exception ex)
+            {
+                trans.Rollback();
+                strout = ex.Message;
+            }
+            connection.Close();
+            SqlConnection.ClearPool(connection);
+            return strout;
+        }
+
+        public string InsertMasterFormField(JObject json, string actiontype)
+        {
+            string strout = "";
+            var retObject = new List<dynamic>();
+            var provider = dbconn.sqlprovider();
+            var cstrname = dbconn.constringName("pyfatrack");
+
+            var conn = dbconn.constringList(provider, cstrname);
+            SqlTransaction trans;
+            SqlConnection connection = new SqlConnection(conn);
+            connection.Open();
+            trans = connection.BeginTransaction();
+
+            try
+            {
+                SqlCommand cmd = new SqlCommand();
+                if (actiontype == "update")
+                {
+                    cmd = new SqlCommand("sp_deletemasterformdetailfieldbymfhid", connection, trans);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@id", json.GetValue("msf_id").ToString());
+                    cmd.ExecuteNonQuery();
+                }
+
+                JArray jaData = JArray.Parse(json["detail"].ToString());
+                for (int i = 0; i < jaData.Count; i++)
+                {
+                    //insert form detail
+                    var data = new JObject();
+                    data = JObject.Parse(jaData[i].ToString());
+                    cmd = new SqlCommand("insert_master_form_detail_field", connection, trans);
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.AddWithValue("@id", Int32.Parse(json.GetValue("msf_id").ToString()));
+                    cmd.Parameters.AddWithValue("@code", json.GetValue("temp_code").ToString());
+                    cmd.Parameters.AddWithValue("@fieldid", data["fieldid"].ToString());
+                    cmd.Parameters.AddWithValue("@counter", data["counter"].ToString());
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.ExecuteNonQuery();
                 }
