@@ -160,7 +160,7 @@ namespace pyfa.form.Controllers
                 var cstrname = dbconn.constringName("pyfatrack");
                 var split = "||";
                 string spname = "sp_updatedynamicoptionhdr";
-                string p1 = "@id" + split + bc.CheckValueData(json, "id") + split + "bi";
+                string p1 = "@code" + split + bc.CheckValueData(json, "code") + split + "s";
                 string p2 = "@desc" + split + bc.CheckValueData(json, "desc") + split + "s";
                 retObject1 = bc.execSqlWithReturnDataModule(dbprv, cstrname, split, spname, p1, p2);
 

@@ -41,7 +41,7 @@ namespace pyfa.form.Controllers
                 var retrunlist = ldl.listmasterfield();
                 jOut.Add("status", mc.GetMessage("api_output_ok"));
                 jOut.Add("message", mc.GetMessage("process_success"));
-                jOut.Add("data", retrunlist);
+                jOut.Add("data", retrunlist); 
 
             }
             catch (Exception ex)

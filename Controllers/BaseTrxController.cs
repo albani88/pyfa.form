@@ -96,6 +96,17 @@ namespace pyfa.form.Controllers
             try
             {
                 SqlCommand cmd = new SqlCommand();
+                cmd = new SqlCommand("update_master_form_hdr", connection, trans);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@code", Convert.ToString(json.GetValue("temp_code").ToString()));
+                cmd.Parameters.AddWithValue("@header_name", json.GetValue("header_name").ToString());
+                cmd.Parameters.AddWithValue("@ttl_content", json.GetValue("ttl_contnet").ToString());
+                cmd.Parameters.AddWithValue("@usr", json.GetValue("user").ToString());
+                SqlDataReader dr = cmd.ExecuteReader();
+                cmd.Parameters.Clear();
+                retObject = bc.GetDataObjSqlsvr(dr);
+                dr.Close();
+
                 JArray jaData = JArray.Parse(json["detail"].ToString());
                 for (int i = 0; i < jaData.Count; i++)
                 {
