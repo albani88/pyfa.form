@@ -341,7 +341,7 @@ namespace pyfa.form.libs
             var split = "||";
 
             string spname = "sp_deletemasterformbyid";
-            string p1 = "@id" + split + Int32.Parse(json.GetValue("id").ToString()) + split + "i";
+            string p1 = "@code" + split + json.GetValue("code").ToString() + split + "s";
             string p2 = "@usr" + split + json.GetValue("user").ToString() + split + "s";
             retObject = bc.ExecSqlWithReturnCustomSplit(dbprv, cstrname, split, spname, p1, p2);
             jaReturn = lc.convertDynamicToJArray(retObject);
