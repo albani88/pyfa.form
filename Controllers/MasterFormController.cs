@@ -132,7 +132,7 @@ namespace pyfa.form.Controllers
         }
 
 
-        [HttpPost("insert")]
+         [HttpPost("insert")]
         public IActionResult CreateMasterForm([FromBody] JObject json)
         {
             int code = 200;
@@ -140,6 +140,7 @@ namespace pyfa.form.Controllers
 
             try
             {
+                var detail = json.GetValue("detail");
                 List<dynamic> retObject = new List<dynamic>();
                 var jaData = ldl.genetratetemplatecode();
                 string tmpcode = jaData[0]["tmp_code"].ToString();
@@ -151,21 +152,25 @@ namespace pyfa.form.Controllers
                 {
                     json["temp_code"] = "";
                 }
-
-                var res = bx.InsertMasterForm(json);
-                if (res == "success")
+                if (detail.Count() > 0)
                 {
-                    code = 200;
-                    jOut = new JObject();
-                    jOut.Add("status", mc.GetMessage("api_output_ok"));
-                    jOut.Add("message", mc.GetMessage("save_success"));
+                    
+                    var res = bx.InsertMasterForm(json);
+                    if (res == "success")
+                    {
+                        code = 200;
+                        jOut = new JObject();
+                        jOut.Add("status", mc.GetMessage("api_output_ok"));
+                        jOut.Add("message", mc.GetMessage("save_success"));
+                    }
+                    else
+                    {
+                        jOut = new JObject();
+                        jOut.Add("status", mc.GetMessage("api_output_not_ok"));
+                        jOut.Add("message", "Create Failed");
+                    }
                 }
-                else
-                {
-                    jOut = new JObject();
-                    jOut.Add("status", mc.GetMessage("api_output_not_ok"));
-                    jOut.Add("message", "Create Failed");
-                }
+                
 
             }
             catch (Exception ex)
