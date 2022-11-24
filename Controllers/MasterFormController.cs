@@ -154,15 +154,14 @@ namespace pyfa.form.Controllers
                 }
                 if (detail.Count() > 0)
                 {
-                    var res = "success";
-                    //var res = bx.InsertMasterForm(json);
+                   
+                    var res = bx.InsertMasterForm(json);
                     if (res == "success")
                     {
                         code = 200;
                         jOut = new JObject();
                         //jOut.Add("status", mc.GetMessage("api_output_ok"));
                         //jOut.Add("message", mc.GetMessage("save_success"));
-                        json["code"] = "TMP1";
                         var resultdetail = this.detailmasterform(json);
                         jOut.Add("result", resultdetail);
                     }

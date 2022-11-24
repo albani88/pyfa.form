@@ -40,7 +40,7 @@ namespace pyfa.form.Controllers
                 SqlCommand cmd = new SqlCommand();
                 cmd = new SqlCommand("insert_master_form_hdr", connection, trans);
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@code", Convert.ToString(json.GetValue("temp_code").ToString()));
+                cmd.Parameters.AddWithValue("@code", Convert.ToString(json.GetValue("code").ToString()));
                 cmd.Parameters.AddWithValue("@header_name", json.GetValue("header_name").ToString());
                 cmd.Parameters.AddWithValue("@ttl_content", json.GetValue("ttl_contnet").ToString());
                 cmd.Parameters.AddWithValue("@usr", json.GetValue("user").ToString());
@@ -59,7 +59,7 @@ namespace pyfa.form.Controllers
                     cmd = new SqlCommand("insert_master_form_detail", connection, trans);
                     cmd.Parameters.Clear();
                     cmd.Parameters.AddWithValue("@id", Int32.Parse(mfh_id));
-                    cmd.Parameters.AddWithValue("@code", json.GetValue("temp_code").ToString());
+                    cmd.Parameters.AddWithValue("@code", json.GetValue("code").ToString());
                     cmd.Parameters.AddWithValue("@contentname", data["contentname"].ToString());
                     cmd.Parameters.AddWithValue("@contenttype",data["contenttype"].ToString());
                     cmd.Parameters.AddWithValue("@counter", data["counter"].ToString());
